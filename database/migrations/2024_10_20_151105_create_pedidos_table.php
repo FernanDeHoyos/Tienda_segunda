@@ -13,7 +13,7 @@ return new class extends Migration
 {
     Schema::create('pedidos', function (Blueprint $table) {
         $table->id();
-        $table->foreignId('id_usuario')->constrained('usuarios')->onDelete('cascade');
+        $table->foreignId('id_usuario')->constrained('users')->onDelete('cascade');
         $table->decimal('total', 10, 2);
         $table->string('direccion_envio');
         $table->timestamp('fecha_pedido')->useCurrent();

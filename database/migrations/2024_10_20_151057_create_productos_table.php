@@ -19,7 +19,7 @@ return new class extends Migration
         $table->string('estado')->default('disponible');
         $table->string('imagen_url')->nullable();
         $table->foreignId('id_categoria')->constrained('categorias')->onDelete('cascade');
-        $table->foreignId('id_usuario')->constrained('usuarios')->onDelete('cascade');
+        $table->foreignId('id_usuario')->constrained('users')->onDelete('cascade');
         $table->timestamp('fecha_publicacion')->useCurrent();
         $table->timestamps();
     });
