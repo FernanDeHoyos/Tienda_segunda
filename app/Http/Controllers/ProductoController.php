@@ -7,6 +7,9 @@ use App\Models\Categoria;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
+use Illuminate\Contracts\View\Factory;
+
 
 class ProductoController extends Controller
 {
@@ -51,9 +54,10 @@ class ProductoController extends Controller
     return redirect()->route('productos.index')->with('success', 'Producto agregado exitosamente');
 }
 
-public function index()
+public function index(): Factory|View
 {
     $productos = Producto::where('id_usuario', auth()->id())->get();
+
     return view('productos.index', compact('productos'));
 }
 

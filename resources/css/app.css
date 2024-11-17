@@ -13,3 +13,6 @@ height: calc(100% - 73px);
 height: 100%;
 }
 }
+.toast-container {
+    z-index: 1055; /* Asegúrate de que esté sobre otros elementos */
+}
