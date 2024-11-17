@@ -71,34 +71,47 @@ function updateCart() {
   
 
  // Update the cart in the modal
- function actualizarCarrito(idUsuario) {
-   console.log("Actualizando carrito para el usuario:", idUsuario);
-   let carrito = JSON.parse(localStorage.getItem('carrito_' + idUsuario)) || {};
-   console.log("Contenido del carrito:", carrito);
-   updateCart()
-   if (!cartItemsContainer) return;
-
-   cartItemsContainer.innerHTML = '';
-   if (Object.keys(carrito).length === 0) {
-     emptyCartMessage.style.display = 'block';
-   } else {
-     emptyCartMessage.style.display = 'none';
-     Object.keys(carrito).forEach((productId) => {
-       let producto = carrito[productId];
-       let itemHTML = `
-         <div class="cart-item d-flex justify-content-between align-items-center mb-3">
-           <img src="${producto.imagen}" alt="${producto.nombre}" style="max-height: 50px; object-fit: cover; border-radius: 10px;">
-           <div>
-             <p><strong>${producto.nombre}</strong></p>
-             <p>$${producto.precio} x ${producto.cantidad}</p>
-           </div>
-           <button class="btn btn-sm btn-danger" onclick="eliminarProducto('${productId}', '${idUsuario}')">Eliminar</button>
-         </div>
-       `;
-       cartItemsContainer.innerHTML += itemHTML;
-     });
-   }
- }
+// Update the cart in the modal
+function actualizarCarrito(idUsuario) {
+    console.log("Actualizando carrito para el usuario:", idUsuario);
+    let carrito = JSON.parse(localStorage.getItem('carrito_' + idUsuario)) || {};
+    console.log("Contenido del carrito:", carrito);
+    
+    updateCart();
+    
+    if (!cartItemsContainer) return;
+  
+    cartItemsContainer.innerHTML = '';
+    let total = 0;  // Variable para calcular el total
+  
+    if (Object.keys(carrito).length === 0) {
+      emptyCartMessage.style.display = 'block';
+      document.getElementById('cartTotal').innerHTML = ""; // Vaciar el total si el carrito está vacío
+    } else {
+      emptyCartMessage.style.display = 'none';
+      Object.keys(carrito).forEach((productId) => {
+        let producto = carrito[productId];
+        let itemHTML = `
+          <div class="cart-item d-flex justify-content-between align-items-center mb-3">
+            <img src="${producto.imagen}" alt="${producto.nombre}" style="max-height: 50px; object-fit: cover; border-radius: 10px;">
+            <div>
+              <p><strong>${producto.nombre}</strong></p>
+              <p>$${producto.precio} x ${producto.cantidad}</p>
+            </div>
+            <button class="btn btn-sm btn-danger" onclick="eliminarProducto('${productId}', '${idUsuario}')">Eliminar</button>
+          </div>
+        `;
+        cartItemsContainer.innerHTML += itemHTML;
+  
+        // Calcular el total
+        total += producto.precio * producto.cantidad;
+      });
+      
+      // Mostrar el total
+      document.getElementById('cartTotal').innerHTML = `Total: $${total.toFixed(2)}`;
+    }
+  }
+  
 
  // Get the user ID from sessionStorage
  function obtenerIdUsuario() {

@@ -41,6 +41,8 @@
                     <!-- Aquí se mostrarán los productos cargados desde localStorage -->
                 </div>
                 <p id="emptyCartMessage" class="text-center text-muted" style="display: none;">El carrito está vacío.</p>
+                <div id="cartTotal" class="text-end mt-3 p-3 bg-light rounded">
+</div>
                 <button id="clearCart" class="btn btn-outline-danger w-100 mt-3">Vaciar Carrito</button>
             </div>
         </div>
@@ -48,30 +50,49 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const cartItemsContainer = document.getElementById('cartItems');
-        const emptyCartMessage = document.getElementById('emptyCartMessage');
-        const clearCartButton = document.getElementById('clearCart');
+   document.addEventListener('DOMContentLoaded', function () {
+    // Primero verificamos que podemos obtener todos los elementos
+    const cartItemsContainer = document.getElementById('cartItems');
+    const emptyCartMessage = document.getElementById('emptyCartMessage');
+    const cartTotal = document.getElementById('cartTotal');
+    const clearCartButton = document.getElementById('clearCart');
 
-        function obtenerIdUsuario() {
-            const idUser = sessionStorage.getItem('id_user')
-            return idUser
-        }
+    // Agregamos logs para verificar que los elementos existen
+    console.log('Container:', cartItemsContainer);
+    console.log('Empty Message:', emptyCartMessage);
+    console.log('Cart Total:', cartTotal);
+    console.log('Clear Button:', clearCartButton);
+    const strong  = '<strong>Total a Pagar: $0.00</strong>';
+    cartTotal.insertAdjacentHTML('beforeend', strong);
+    
 
-        function cargarCarrito() {
-            const idUsuario = obtenerIdUsuario();
-            const carrito = JSON.parse(localStorage.getItem('carrito_' + idUsuario)) || {};
+    function cargarCarrito() {
+        const idUsuario = obtenerIdUsuario();
+        console.log('ID Usuario:', idUsuario); // Verificar el ID de usuario
 
-            cartItemsContainer.innerHTML = '';
-            let totalItems = 0;
+        const carrito = JSON.parse(localStorage.getItem('carrito_' + idUsuario)) || {};
+        console.log('Carrito:', carrito); // Verificar el contenido del carrito
+
+        let totalPrice = 0;
+
+        cartItemsContainer.innerHTML = '';
+        cartTotal.innerHTML = `<strong>Total a Pagar: $${totalPrice.toFixed(2)}</strong>`;
+        if (Object.keys(carrito).length === 0) {
+            emptyCartMessage.style.display = 'block';
+        } else {
+            emptyCartMessage.style.display = 'none';
 
             for (const id in carrito) {
                 const item = carrito[id];
-                totalItems += item.cantidad;
+                totalPrice += item.precio * item.cantidad;
+                console.log('Precio del item:', item.precio); // Verificar precio
+                console.log('Cantidad del item:', item.cantidad); // Verificar cantidad
 
                 const productHtml = `
-                    <div class="d-flex align-items-center mb-3">
-                        <img src="${item.imagen}" alt="${item.nombre}" class="img-fluid rounded" style="width: 80px; height: 80px; object-fit: cover;">
+                    <div class="d-flex align-items-center mb-3 border p-2">
+                        <img src="${item.imagen}" alt="${item.nombre}" 
+                             class="img-fluid rounded" 
+                             style="width: 80px; height: 80px; object-fit: cover;">
                         <div class="ms-3 flex-grow-1">
                             <h6 class="mb-0">${item.nombre}</h6>
                             <p class="mb-0 text-muted">Cantidad: ${item.cantidad}</p>
@@ -82,22 +103,26 @@
                 cartItemsContainer.insertAdjacentHTML('beforeend', productHtml);
             }
 
-            if (totalItems === 0) {
-                emptyCartMessage.style.display = 'block';
-            } else {
-                emptyCartMessage.style.display = 'none';
-            }
+            console.log('Total calculado:', totalPrice); // Verificar total final
+            
         }
+    }
 
-        function vaciarCarrito() {
-            const idUsuario = obtenerIdUsuario();
-            localStorage.removeItem('carrito_' + idUsuario);
-            cargarCarrito();
-        }
+    function obtenerIdUsuario() {
+        return sessionStorage.getItem('id_user') || 'default';
+    }
 
-        clearCartButton.addEventListener('click', vaciarCarrito);
-
+    function vaciarCarrito() {
+        const idUsuario = obtenerIdUsuario();
+        localStorage.removeItem('carrito_' + idUsuario);
         cargarCarrito();
-    });
+    }
+
+    // Agregamos event listeners
+    clearCartButton.addEventListener('click', vaciarCarrito);
+    
+    // Cargamos el carrito inicialmente
+    cargarCarrito();
+});
 </script>
 @endsection
