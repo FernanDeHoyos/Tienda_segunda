@@ -1,59 +1,72 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use App\Models\Pedido;
 use Illuminate\Http\Request;
+use App\Models\Pedido;
+use App\Models\DetallePedido;
+use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class PedidoController extends Controller
 {
-    // Obtener todos los pedidos
-    public function index()
-    {
-        return Pedido::with('usuario')->get();
+    public function guardarPedido(Request $request)
+{
+    // Obtener el id del usuario desde la sesión
+    $idUsuario = auth()->id();
+    $carrito = json_decode($request->carrito, true); // Obtener el carrito desde el frontend (usamos JSON)
+
+    if (empty($carrito)) {
+        return redirect()->back()->with('error', 'El carrito está vacío.');
+    }
+
+    // Calcular el total del carrito
+    $total = 0;
+    foreach ($carrito as $item) {
+        $total += $item['precio'] * $item['cantidad'];
     }
 
     // Crear un nuevo pedido
-    public function store(Request $request)
-    {
-        $request->validate([
-            'id_usuario' => 'required|exists:usuarios,id',
-            'total' => 'required|numeric',
-            'direccion_envio' => 'required',
+    $pedido = Pedido::create([
+        'id_usuario' => $idUsuario,
+        'total' => $total,
+        'direccion_envio' => $request->direccion_envio,
+        'fecha_pedido' => Carbon::now(),
+        'estado' => 'pendiente',
+    ]);
+
+    // Guardar los detalles del pedido
+    foreach ($carrito as $id => $item) {
+        DetallePedido::create([
+            'id_pedido' => $pedido->id,
+            'id_producto' => $id,
+            'cantidad' => $item['cantidad'],
+            'precio_unitario' => $item['precio'],
         ]);
-
-        $pedido = Pedido::create([
-            'id_usuario' => $request->id_usuario,
-            'total' => $request->total,
-            'direccion_envio' => $request->direccion_envio,
-            'fecha_pedido' => now(),
-            'estado' => $request->estado ?? 'pendiente',
-        ]);
-
-        return response()->json($pedido, 201);
     }
 
-    // Obtener un pedido específico
-    public function show($id)
-    {
-        return Pedido::with(['usuario', 'detallesPedidos'])->findOrFail($id);
-    }
+    // Obtener los pedidos realizados por el usuario
+    $pedidos = Pedido::where('id_usuario', $idUsuario)->get();
 
-    // Actualizar un pedido
-    public function update(Request $request, $id)
-    {
-        $pedido = Pedido::findOrFail($id);
-        $pedido->update($request->all());
+    // Redirigir a la página de éxito con los pedidos del usuario
+    return view('shopping.pedido', [
+        'pedidos' => $pedidos
+    ])->with('success', 'Pedido realizado con éxito.');
+}
 
-        return response()->json($pedido, 200);
-    }
+public function verPedidos()
+{
+    // Obtener el id del usuario autenticado
+    $idUsuario = auth()->id();
 
-    // Eliminar un pedido
-    public function destroy($id)
-    {
-        $pedido = Pedido::findOrFail($id);
-        $pedido->delete();
+    // Obtener los pedidos con sus detalles (usando el nombre detallesPedidos)
+    $pedidos = Pedido::with('detallesPedidos') // Cargar detalles del pedido
+        ->where('id_usuario', $idUsuario)
+        ->orderBy('fecha_pedido', 'desc')
+        ->get();
 
-        return response()->json(null, 204);
-    }
+    // Pasar los pedidos a la vista
+    return view('shopping.pedido', compact('pedidos'));
+}
+
+
 }

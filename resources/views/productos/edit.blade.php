@@ -72,7 +72,7 @@
 
     @include('layouts.navbar')
 
-    <div class="container pt-5 mt-5">
+    <div class="container pt-5 mt-5 mb-5">
     <div class="card shadow-lg mt-5">
     <div class="card-body">
         <h2 class="mb-4">Editar Producto</h2>
@@ -153,6 +153,8 @@
         </div>
         </div>
     </div>
+
+    @include( 'shopping.partials.footer')
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>

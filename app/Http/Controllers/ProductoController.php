@@ -56,33 +56,52 @@ class ProductoController extends Controller
 
 public function index(): Factory|View
 {
+    // Obtener los productos del usuario
     $productos = Producto::where('id_usuario', auth()->id())->get();
 
+    // Cargar la relación con 'detallesPedidos' en la misma consulta
+    $productos->load(['detallesPedidos' => function ($query) {
+        $query->whereHas('pedido', function ($query) {
+            $query->where('estado', 'pendiente'); // Filtramos por estado 'pendiente' en la tabla pedidos
+        });
+    }]);
+
+    // Verificar si el producto tiene detalles de pedido pendientes
+    foreach ($productos as $producto) {
+        $producto->en_espera = $producto->detallesPedidos->isNotEmpty();
+    }
+
+    // Pasar los productos a la vista
     return view('productos.index', compact('productos'));
 }
 
 
 
+
+
+
+
 public function destroy($id)
-    {
-        // Buscar el producto por su ID y asegurarse de que pertenece al usuario autenticado
-        $producto = Producto::where('id', $id)->where('id_usuario', Auth::id())->first();
+{
+    // Buscar el producto por su ID y asegurarse de que pertenece al usuario autenticado
+    $producto = Producto::where('id', $id)->where('id_usuario', Auth::id())->first();
 
-        // Si el producto no existe o no pertenece al usuario, redireccionar con error
-        if (!$producto) {
-            return redirect()->route('productos.index')->with('error', 'Producto no encontrado o no autorizado para eliminarlo.');
-        }
-
-        // Eliminar la imagen del almacenamiento si existe
-        if ($producto->imagen_url) {
-            Storage::delete(str_replace('/storage/', 'public/', $producto->imagen_url));
-        }
-
-        // Eliminar el producto de la base de datos
-        $producto->delete();
-
-        return redirect()->route('productos.index')->with('success', 'Producto eliminado exitosamente');
+    // Si el producto no existe o no pertenece al usuario, redireccionar con error
+    if (!$producto) {
+        return redirect()->route('productos.index')->with('error', 'Producto no encontrado o no autorizado para eliminarlo.');
     }
+
+    // Eliminar la imagen del almacenamiento si existe
+    if ($producto->imagen_url && Storage::exists(str_replace('/storage/', 'public/', $producto->imagen_url))) {
+        Storage::delete(str_replace('/storage/', 'public/', $producto->imagen_url));
+    }
+
+    // Eliminar el producto de la base de datos
+    $producto->delete();
+
+    return redirect()->route('productos.index')->with('success', 'Producto eliminado exitosamente');
+}
+
 
     public function edit($id)
 {

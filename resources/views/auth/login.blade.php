@@ -10,17 +10,21 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
     <!-- MDB -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/8.0.0/mdb.min.css" rel="stylesheet" />
-    <title>Registro</title>
-    
+    <title>Login</title>
+    <style>
+      body {
+          background-color: #343a40; 
+            font-family: 'Roboto', sans-serif;
+        }
+    </style>
 </head>
 
 <body  class="d-flex justify-content-center align-items-center min-vh-100">
- <!-- Section: Design Block -->
 <section class="text-center d-flex align-items-center min-vh-100">
   <div class="card mb-3 mx-auto" style="max-width: 400px;">
     <div class="card-body py-5">
 
-      <h2 class="fw-bold mb-5">Crear una cuenta</h2>
+      <h2 class="fw-bold mb-5">Inicio de sesion</h2>
 
       <form method="POST" action="{{ route('login') }}">
         @csrf

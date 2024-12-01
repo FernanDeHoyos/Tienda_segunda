@@ -36,21 +36,31 @@
 </nav>
 
 @auth
-  <!-- Segundo navbar (claro) -->
-  <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top" style="top: 60px;">
-    <div class="container">
-    <div class="navbar-nav">
-      <a href="{{ route('productos.index') }}" class="nav-link me-3">Lista de Productos</a>
+ <!-- Segundo navbar (claro) -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light navStyle" style="top: 60px;">
+  <div class="container">
+    <!-- Grupo de enlaces alineados a la izquierda -->
+    <div class="navbar-nav me-auto">
+      <a href="{{ route('productos.index') }}" class="nav-link me-3">Mis productos</a>
       <a href="{{ route('productos.create') }}" class="nav-link me-3">Agregar Producto</a>
+    </div>
+
+    <!-- Grupo de enlaces alineados a la derecha -->
+    <div class="navbar-nav ms-auto">
+      <a href="{{ route('shopping.index') }}" class="nav-link me-3">Ver productos</a>
+      <a href="{{ route('shopping.compras') }}" class="nav-link me-3">Comprar de carrito</a>
+      <a href="{{ route('shopping.pedido') }}" class="nav-link me-3">Mis compras</a>
 
       <!-- Icono de carrito -->
       <a href="#" class="nav-link d-flex align-items-center" id="cartButton">
-      <i class="fas fa-shopping-cart me-1"></i> 
-      <span class="badge bg-primary ms-1" id="cart-count">0</span> <!-- Contador de artículos en el carrito -->
+        <i class="fas fa-shopping-cart me-1"></i>
+        <span class="badge bg-primary ms-1" id="cart-count">0</span>
+        <!-- Contador de artículos en el carrito -->
       </a>
     </div>
-    </div>
-  </nav>
+  </div>
+</nav>
+
 @endauth
 
 
@@ -85,6 +95,9 @@
 <script src="{{ asset(path: 'js/cart.js') }}"></script>
 
 <style>
+  .navStyle {
+    margin-bottom: 30px;
+  }
  /* Estilo para el modal pequeño */
 .modal-dialog.modal-sm {
   max-width: 400px;

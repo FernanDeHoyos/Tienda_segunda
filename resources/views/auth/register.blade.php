@@ -11,8 +11,14 @@
     <!-- MDB -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/8.0.0/mdb.min.css" rel="stylesheet" />
     <title>Registro</title>
-    
+    <style>
+      body {
+          background-color: #343a40; 
+            font-family: 'Roboto', sans-serif;
+        }
+    </style>
 </head>
+
 
 <body class="d-flex justify-content-center align-items-center min-vh-100">
  <!-- Section: Design Block -->

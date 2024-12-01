@@ -14,6 +14,11 @@ height: 100%;
 }
 }
 
+body {
+  background-color: #343a40; 
+    font-family: 'Roboto', sans-serif;
+}
+
 .form-outline .form-control:invalid ~ .form-label,
 .form-outline .form-control:focus ~ .form-label {
   transform: translateY(-1.5rem);

@@ -38,6 +38,7 @@
 
    if (!carrito[id]) {
      carrito[id] = {
+       id: id,
        nombre: nombre,
        precio: parseFloat(precio),
        imagen: imagen,

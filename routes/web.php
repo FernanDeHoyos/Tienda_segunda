@@ -4,6 +4,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\CarritoController;
+use App\Http\Controllers\PedidoController;
+
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductoController;
@@ -33,6 +35,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/shopping', [ShopController::class, 'index'])->name('shopping.index');
     Route::get('/shopping/filter', action: [ShopController::class, 'filter'])->name('shopping.filter');
     Route::get('/compra', [ShopController::class, 'compras'])->name(name: 'shopping.compras');
+
+    Route::post('/guardar-pedido', [PedidoController::class, 'guardarPedido'])->name('guardar.pedido');
+Route::get('/pedido-exito', function() {
+    return view('shopping.pedido');
+})->name('shopping.pedido');
+
+Route::get('/pedidos', [PedidoController::class, 'verPedidos'])->name('shopping.pedido');
 
 });
 
